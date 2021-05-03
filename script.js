@@ -1,21 +1,27 @@
 // script.js
 
 const img = new Image(); // used to load image from <input> and draw to canvas
+const canvas = document.getElementById('user-image');
+const ctx = canvas.getContext('2d');
 const imgInput = document.getElementById('image-input');
+const generateForm = document.getElementById('generate-meme');
+const submit = document.querySelector('button[type="submit"]');
+const reset = document.querySelector('button[type="reset"]');
+const button = document.querySelector('button[type="button"]');
+
+const topText = document.getElementById('text-top');
+const bottmText = document.getElementById('text-bottom');
 
 // once user choose imgae from file update image src
 imgInput.onchange = e =>  {
     img.src = URL.createObjectURL(e.target.files[0]);
-    let name = imgInput.value.replace(/^.*[\\\/]/, ''); // path match from https://stackoverflow.com/questions/53908062/
-    img.alt = name;
-    console.log(name);
+    img.alt = imgInput.value.replace(/^.*[\\\/]/, ''); // path match cited from https://stackoverflow.com/questions/53908062/
 };
 
 // Fires whenever the img object loads a new image (such as with img.src =)
 img.addEventListener('load', () => {
   // TODO
-      let canvas = document.getElementById('user-image');
-      let ctx = canvas.getContext('2d');
+      
       let cHeight = canvas.height; let cWidth = canvas.width;
       ctx.clearRect(0, 0, cWidth, cHeight);
       ctx.fillRect(0, 0, cWidth, cHeight);
@@ -29,6 +35,37 @@ img.addEventListener('load', () => {
   // - Fill the whole Canvas with black first to add borders on non-square images, then draw on top
   // - Clear the form when a new image is selected
   // - If you draw the image to canvas here, it will update as soon as a new image is selected
+});
+
+// submit event
+
+generateForm.addEventListener('submit', e => {
+    e.preventDefault();
+
+    submit.disabled = true;
+    reset.disabled = false;
+    button.disabled = false;
+    
+    ctx.font = '40px serif';
+    ctx.fillStyle = "white";
+    ctx.textAlign = "center";
+    ctx.fillText(topText.value, canvas.width/2, 40);
+    ctx.fillText(bottmText.value, canvas.width/2, canvas.height-20);
+});
+
+reset.addEventListener('click', e => {
+  // toggle buttons
+   submit.disabled = false;
+   reset.disabled = true;
+   button.disabled = true;
+
+  // cleat texts
+  topText.value = "";
+  bottmText.value = "";
+
+   // clear canvas
+   ctx.clearRect(0, 0, canvas.width, canvas.height);
+   imgInput.value = "";
 });
 
 /**
