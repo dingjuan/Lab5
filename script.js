@@ -1,10 +1,26 @@
 // script.js
 
 const img = new Image(); // used to load image from <input> and draw to canvas
+const imgInput = document.getElementById('image-input');
+
+// once user choose imgae from file update image src
+imgInput.onchange = e =>  {
+    img.src = URL.createObjectURL(e.target.files[0]);
+};
 
 // Fires whenever the img object loads a new image (such as with img.src =)
 img.addEventListener('load', () => {
   // TODO
+      let canvas = document.getElementById('user-image');
+      let ctx = canvas.getContext('2d');
+      let cHeight = canvas.height; let cWidth = canvas.width;
+      ctx.clearRect(0, 0, cWidth, cHeight);
+      ctx.fillRect(0, 0, cWidth, cHeight);
+
+      let frame = getDimmensions(canvas.width, canvas.height, img.width, img.height);
+      let x = frame['startX']; let y = frame['startY'];
+      let width = frame['width']; let height = frame['height'];
+      ctx.drawImage(img, x, y, width, height);
 
   // Some helpful tips:
   // - Fill the whole Canvas with black first to add borders on non-square images, then draw on top
