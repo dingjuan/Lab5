@@ -54,9 +54,13 @@ generateForm.addEventListener('submit', e => {
     
     ctx.font = '40px serif';
     ctx.fillStyle = "white";
+    ctx.strokeStyle = "black";
     ctx.textAlign = "center";
+    ctx.strokeText(topText.value, canvas.width/2, 40);
+    ctx.strokeText(bottmText.value, canvas.width/2, canvas.height-20);
     ctx.fillText(topText.value, canvas.width/2, 40);
     ctx.fillText(bottmText.value, canvas.width/2, canvas.height-20);
+  
 });
 
 function setUpVoiceSelector() {
