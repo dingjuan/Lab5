@@ -7,7 +7,12 @@ const imgInput = document.getElementById('image-input');
 const generateForm = document.getElementById('generate-meme');
 const submit = document.querySelector('button[type="submit"]');
 const reset = document.querySelector('button[type="reset"]');
-const button = document.querySelector('button[type="button"]');
+const read = document.querySelector('button[type="button"]');
+
+const synth = window.speechSynthesis;
+const voiceSelector = document.getElementById('voice-selection')
+const volumeImg = document.querySelector('#volume-group img');
+const volumeInput = document.querySelector('#volume-group input');
 
 const topText = document.getElementById('text-top');
 const bottmText = document.getElementById('text-bottom');
@@ -44,7 +49,8 @@ generateForm.addEventListener('submit', e => {
 
     submit.disabled = true;
     reset.disabled = false;
-    button.disabled = false;
+    read.disabled = false;
+    setUpVoiceSelector();
     
     ctx.font = '40px serif';
     ctx.fillStyle = "white";
@@ -53,11 +59,35 @@ generateForm.addEventListener('submit', e => {
     ctx.fillText(bottmText.value, canvas.width/2, canvas.height-20);
 });
 
+function setUpVoiceSelector() {
+  let voices = synth.getVoices();
+  voiceSelector.disabled = false;
+  
+  let noneVoice = voiceSelector.children[0];
+  if (noneVoice && noneVoice.innerText == "No available voice options.") {
+      voiceSelector.removeChild(noneVoice);
+  }
+  console.log(voices.length);
+
+  for(var i = 0; i < voices.length ; i++) {
+      var option = document.createElement('option');
+      option.textContent = voices[i].name + ' (' + voices[i].lang + ')';
+  
+      if(voices[i].default) {
+        option.textContent += ' -- DEFAULT';
+      }
+  
+      option.setAttribute('data-lang', voices[i].lang);
+      option.setAttribute('data-name', voices[i].name);
+      voiceSelector.appendChild(option);
+ }
+}
+
 reset.addEventListener('click', e => {
   // toggle buttons
    submit.disabled = false;
    reset.disabled = true;
-   button.disabled = true;
+   read.disabled = true;
 
   // cleat texts
   topText.value = "";
@@ -68,6 +98,30 @@ reset.addEventListener('click', e => {
    imgInput.value = "";
 });
 
+read.addEventListener('click', e => {
+    let voices = synth.getVoices();
+    let content = topText.value + bottmText.value;
+    let utter= new SpeechSynthesisUtterance(content);    
+    
+    utter.voice =  voices[voiceSelector.selectedIndex];
+    utter.volume = volumeInput.value/100;
+    synth.speak(utter);
+});
+
+volumeInput.onchange = e =>  {
+  let path = "icons/volume-level-";
+  if (volumeInput.value>=67) {
+    path += "3.svg";
+  } else if (volumeInput.value>=34) { 
+    path += "2.svg";
+  } else if (volumeInput.value>=1) { 
+    path += "1.svg";
+  } else {
+    path += "0.svg";
+  }
+
+  volumeImg.src = path;
+};
 /**
  * Takes in the dimensions of the canvas and the new image, then calculates the new
  * dimensions of the image so that it fits perfectly into the Canvas and maintains aspect ratio
