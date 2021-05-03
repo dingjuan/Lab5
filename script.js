@@ -6,6 +6,9 @@ const imgInput = document.getElementById('image-input');
 // once user choose imgae from file update image src
 imgInput.onchange = e =>  {
     img.src = URL.createObjectURL(e.target.files[0]);
+    let name = imgInput.value.replace(/^.*[\\\/]/, ''); // path match from https://stackoverflow.com/questions/53908062/
+    img.alt = name;
+    console.log(name);
 };
 
 // Fires whenever the img object loads a new image (such as with img.src =)
